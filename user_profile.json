@@ -1,0 +1,30 @@
+{
+  "personal_info": {
+    "full_name": "Vipul Kr Singh",
+    "email": "vipulsingh98710@gmail.com",
+    "phone": "9661810942",
+    "address": "",
+    "company": "",
+    "job_title": "",
+    "linkedin": "https://www.linkedin.com/in/vipul-singh-88b868285",
+    "website": "",
+    "github": "",
+    "professional_summary": "Passionate AI Developer creating innovative solutions and transforming ideas into reality through cutting-edge technology."
+  },
+  "preferences": {
+    "default_tone": "professional",
+    "include_phone": true,
+    "include_address": false,
+    "include_email": true,
+    "signature_style": "formal",
+    "include_linkedin": true,
+    "include_website": false,
+    "email_style": "elegant"
+  },
+  "social_links": {
+    "linkedin": "https://www.linkedin.com/in/vipul-singh-88b868285",
+    "github": "",
+    "portfolio": "",
+    "twitter": ""
+  }
+}

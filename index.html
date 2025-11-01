@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ---------- Reset and Base Styles ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Enhanced Animated background stars */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            z-index: -1;
+            animation: star-twinkle 8s infinite alternate;
+        }
+
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            max-height: 850px;
+            background: rgba(10, 10, 20, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 100, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---------- Chat Area ---------- */
+        .chat-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        /* ---------- Simplified Solar System ---------- */
+        .logo-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .chat-area.has-messages .logo-container {
+            opacity: 0;
+        }
+
+        .sun {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffcc00, #ff9900, #ff6600);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 60px rgba(255, 153, 0, 0.9), 0 0 100px rgba(255, 153, 0, 0.4);
+        }
+
+        .sun::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 204, 0, 0.3);
+            animation: sun-glow 3s infinite alternate;
+        }
+
+        /* Single orbit only */
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 200px;
+            height: 200px;
+            animation: rotate 15s linear infinite;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: planet-glow 2s infinite alternate;
+        }
+
+        .planet-1 {
+            width: 14px;
+            height: 14px;
+            top: 0;
+            left: 50%;
+            background: #6a89cc;
+            animation-delay: 0s;
+        }
+
+        .planet-2 {
+            width: 12px;
+            height: 12px;
+            top: 100%;
+            left: 50%;
+            background: #f8c291;
+            animation-delay: 0.3s;
+        }
+
+        .planet-3 {
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 0;
+            background: #82ccdd;
+            animation-delay: 0.6s;
+        }
+
+        .planet-4 {
+            width: 13px;
+            height: 13px;
+            top: 50%;
+            left: 100%;
+            background: #b8e994;
+            animation-delay: 0.9s;
+        }
+
+        /* Solar System Animations */
+        @keyframes sun-glow {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.1); opacity: 0.6; }
+        }
+
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes planet-glow {
+            0% { 
+                filter: brightness(1); 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            100% { 
+                filter: brightness(1.3); 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+        }
+
+        /* ---------- Message Bubbles ---------- */
+        .message {
+            display: flex;
+            max-width: 80%;
+            animation: message-appear 0.3s ease-out;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #6e44ff, #ff44b4);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.assistant .message-bubble {
+            background: rgba(30, 30, 50, 0.9);
+            color: #e0e0e0;
+            border-bottom-left-radius: 5px;
+            border: 1px solid rgba(100, 100, 255, 0.2);
+        }
+
+        .message.assistant.email-preview-message .message-bubble {
+            background: rgba(30, 40, 60, 0.9);
+            border: 1px solid rgba(100, 100, 255, 0.3);
+            border-left: 4px solid #6e44ff;
+        }
+
+        @keyframes message-appear {
+            0% { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* ---------- Taskbar Styles ---------- */
+        .taskbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            min-width: 400px;
+            max-width: 600px;
+        }
+
+        .taskbar-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .taskbar-input:focus {
+            border-color: rgba(110, 68, 255, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .taskbar-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .taskbar-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .taskbar-send {
+            background: rgba(110, 68, 255, 0.3);
+            border: 1px solid rgba(110, 68, 255, 0.5);
+        }
+
+        .taskbar-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .taskbar-send:hover {
+            background: rgba(110, 68, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .taskbar-btn.recording {
+            animation: pulse 1.5s infinite;
+            background: rgba(255, 68, 180, 0.3);
+            border-color: rgba(255, 68, 180, 0.5);
+        }
+
+        .taskbar-btn.active {
+            background: rgba(110, 68, 255, 0.3);
+            border-color: rgba(110, 68, 255, 0.5);
+        }
+
+        /* ---------- Document Upload Styles ---------- */
+        .document-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px dashed rgba(100, 100, 255, 0.3);
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            animation: document-slide 0.3s ease-out;
+        }
+
+        .document-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .document-icon {
+            color: #6e44ff;
+            font-size: 16px;
+        }
+
+        .document-name {
+            flex: 1;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .document-remove {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .document-remove:hover {
+            background: rgba(255, 68, 68, 0.2);
+        }
+
+        @keyframes document-slide {
+            0% { 
+                opacity: 0; 
+                transform: translateX(-10px); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        /* ---------- Typing Indicator ---------- */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 15px 20px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(100, 100, 255, 0.7);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* ---------- Modal Styles ---------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            animation: modal-appear 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 35, 0.95);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(100, 100, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(100, 100, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(100, 100, 255, 0.2);
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6e44ff, #ff44b4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 68, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .email-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(100, 100, 255, 0.2);
+            color: #e0e0e0;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .email-preview strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        @keyframes modal-appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* ---------- Input Section ---------- */
+        .input-section {
+            position: relative;
+            padding: 20px 25px;
+            border-top: 1px solid rgba(100, 100, 255, 0.1);
+            background: rgba(15, 15, 25, 0.9);
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 100, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: rgba(110, 68, 255, 0.5);
+            box-shadow: 0 0 0 2px rgba(110, 68, 255, 0.2);
+        }
+
+        .input-group input {
+            height: 45px;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ---------- Button Row ---------- */
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count {
+            color: #666;
+            font-size: 13px;
+            transition: color 0.3s ease;
+        }
+
+        /* Upload input hidden */
+        .file-input {
+            display: none;
+        }
+
+        /* ---------- Email Preview Elements ---------- */
+        .email-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .email-content {
+            margin: 15px 0;
+        }
+
+        .email-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .email-action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .email-send-btn {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .email-send-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .email-edit-btn {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .email-edit-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulse {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(255, 68, 180, 0.7); 
+            }
+            70% { 
+                box-shadow: 0 0 0 10px rgba(255, 68, 180, 0); 
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(255, 68, 180, 0); 
+            }
+        }
+
+        /* ---------- Responsive Design ---------- */
+        @media (max-width: 768px) {
+            .container {
+                height: 95vh;
+                max-height: none;
+                border-radius: 15px;
+            }
+            
+            .chat-area {
+                padding: 20px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .input-section {
+                padding: 15px 20px;
+            }
+            
+            .sun {
+                width: 80px;
+                height: 80px;
+                font-size: 26px;
+            }
+            
+            .orbit {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .taskbar {
+                min-width: 350px;
+                max-width: 500px;
+                padding: 6px 12px;
+            }
+            
+            .taskbar-input {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .taskbar-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 10px;
+            }
+            
+            .chat-area {
+                padding: 15px;
+            }
+            
+            .input-section {
+                padding: 12px 15px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            .sun {
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+            
+            .orbit {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .planet {
+                width: 8px;
+                height: 8px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .taskbar {
+                min-width: 300px;
+                max-width: 400px;
+                padding: 5px 10px;
+                bottom: 15px;
+            }
+            
+            .taskbar-input {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            
+            .taskbar-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+        }
+
+        /* Header with title */
+        .header {
+            padding: 15px 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-title i {
+            color: #6e44ff;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="app-title">
+                <i class="fas fa-robot"></i>
+                ORION
+            </div>
+            <div class="status">
+                Online
+            </div>
+        </div>
+        
+        <div class="chat-area" id="chatArea">
+            <div class="logo-container" id="logoContainer">
+                <div class="orbit">
+                    <div class="planet planet-1"></div>
+                    <div class="planet planet-2"></div>
+                    <div class="planet planet-3"></div>
+                    <div class="planet planet-4"></div>
+                </div>
+                <div class="sun">AI</div>
+            </div>
+        </div>
+
+        <!-- Email Preview Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Email Preview</h3>
+                    <button class="modal-close" id="modalClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="email-preview" id="emailPreview">
+                        <!-- Email content will be inserted here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" id="cancelSend">
+                        Cancel
+                    </button>
+                    <button class="btn-primary" id="confirmSend">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Email
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section" id="inputSection">
+            <div class="input-wrapper" id="inputWrapper">
+                <!-- Document Upload Area -->
+                <div class="document-preview" id="documentPreview" style="display: none;">
+                    <!-- Documents will be added here dynamically -->
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="emailInput" placeholder="Enter email recipients (comma separated)">
+                </div>
+                <div class="button-row">
+                    <span class="char-count" id="charCount">0/500</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar" id="taskbar">
+        <button class="taskbar-btn" id="taskbarMic" title="Voice input">
+            <i class="fas fa-microphone"></i>
+        </button>
+        <button class="taskbar-btn" id="taskbarUpload" title="Upload documents">
+            <i class="fas fa-paperclip"></i>
+        </button>
+        <input type="text" class="taskbar-input" id="taskbarInput" placeholder="What should I say?">
+        <button class="taskbar-btn taskbar-send" id="taskbarSend" title="Generate email">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+        <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
+    </div>
+
+    <script>
+        // ---------- Variables ----------
+        const chatArea = document.getElementById('chatArea');
+        const emailInput = document.getElementById('emailInput');
+        const taskbarInput = document.getElementById('taskbarInput');
+        const taskbarSend = document.getElementById('taskbarSend');
+        const taskbarMic = document.getElementById('taskbarMic');
+        const taskbarUpload = document.getElementById('taskbarUpload');
+        const fileInput = document.getElementById('fileInput');
+        const documentPreview = document.getElementById('documentPreview');
+        const charCount = document.getElementById('charCount');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        const cancelSend = document.getElementById('cancelSend');
+        const confirmSend = document.getElementById('confirmSend');
+        const emailPreview = document.getElementById('emailPreview');
+
+        let recognition = null;
+        let isRecording = false;
+        let uploadedFiles = [];
+        let currentGeneratedEmail = null;
+        let currentEmailData = null;
+
+        // ---------- Character counter ----------
+        taskbarInput.addEventListener('input', () => {
+            const length = taskbarInput.value.length;
+            charCount.textContent = `${length}/500`;
+            charCount.style.color = length > 500 ? '#ff3333' : length > 400 ? '#ffaa00' : '#666';
+            
+            // Update taskbar send button
+            taskbarSend.disabled = length > 500 || length === 0;
+        });
+
+        // ---------- Document Upload Functionality ----------
+        taskbarUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                
+                uploadedFiles.push(file);
+                addDocumentToPreview(file);
+            });
+            
+            // Reset file input
+            fileInput.value = '';
+            
+            // Show upload button as active
+            taskbarUpload.classList.add('active');
+        });
+
+        function addDocumentToPreview(file) {
+            const documentItem = document.createElement('div');
+            documentItem.className = 'document-item';
+            
+            const fileIcon = getFileIcon(file.type);
+            
+            documentItem.innerHTML = `
+                <div class="document-icon">
+                    <i class="${fileIcon}"></i>
+                </div>
+                <div class="document-name">${file.name}</div>
+                <button class="document-remove" onclick="removeDocument('${file.name}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            documentPreview.appendChild(documentItem);
+            documentPreview.style.display = 'block';
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType.includes('pdf')) return 'fas fa-file-pdf';
+            if (fileType.includes('image')) return 'fas fa-file-image';
+            if (fileType.includes('word') || fileType.includes('document')) return 'fas fa-file-word';
+            if (fileType.includes('text')) return 'fas fa-file-alt';
+            return 'fas fa-file';
+        }
+
+        function removeDocument(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            
+            // Remove from preview
+            const items = documentPreview.querySelectorAll('.document-item');
+            items.forEach(item => {
+                if (item.querySelector('.document-name').textContent === fileName) {
+                    item.remove();
+                }
+            });
+            
+            // Hide preview if no documents
+            if (uploadedFiles.length === 0) {
+                documentPreview.style.display = 'none';
+                taskbarUpload.classList.remove('active');
+            }
+        }
+
+        // ---------- Speech Recognition ----------
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    taskbarInput.value = transcript;
+                    isRecording = false;
+                    taskbarMic.classList.remove('recording');
+                    taskbarInput.focus();
+                };
+
+                recognition.onerror = () => { 
+                    isRecording = false; 
+                    taskbarMic.classList.remove('recording');
+                    alert('Speech recognition error. Please try again.');
+                };
+                
+                recognition.onend = () => { 
+                    isRecording = false; 
+                    taskbarMic.classList.remove('recording');
+                };
+            } else {
+                taskbarMic.style.display = 'none';
+            }
+        }
+
+        // ---------- Add message to chat ----------
+        function addMessage(text, isUser, isEmailPreview = false) {
+            chatArea.classList.add('has-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user' : 'assistant'} ${isEmailPreview ? 'email-preview-message' : ''}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            
+            if (isEmailPreview) {
+                bubble.innerHTML = formatEmailPreview(text);
+            } else {
+                bubble.textContent = text;
+            }
+            
+            msgDiv.appendChild(bubble);
+            chatArea.appendChild(msgDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // Format email preview with actions
+        function formatEmailPreview(emailContent) {
+            return `
+                <div class="email-meta">
+                    <strong>Generated Email Preview</strong>
+                </div>
+                <div class="email-content">${emailContent}</div>
+                <div class="email-actions">
+                    <button class="email-action-btn email-edit-btn" onclick="editGeneratedEmail()">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button>
+                    <button class="email-action-btn email-send-btn" onclick="showSendConfirmation()">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Email
+                    </button>
+                </div>
+            `;
+        }
+
+        // ---------- Typing indicator ----------
+        function addTypingIndicator() {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message assistant';
+            msgDiv.id = 'typingIndicator';
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble typing-indicator';
+            bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            msgDiv.appendChild(bubble);
+            chatArea.appendChild(msgDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const t = document.getElementById('typingIndicator');
+            if (t) t.remove();
+        }
+
+        // ---------- Generate Email (Preview Only) ----------
+        async function generateEmail() {
+            const emails = emailInput.value.trim();
+            const message = taskbarInput.value.trim();
+            
+            if (!emails || !message) {
+                alert('Please enter both recipients and message');
+                return;
+            }
+            
+            if (message.length > 500) {
+                alert('Message exceeds 500 character limit');
+                return;
+            }
+
+            // Add user message
+            let userMessage = `To: ${emails}\n\n${message}`;
+            if (uploadedFiles.length > 0) {
+                userMessage += `\n\n📎 Attachments: ${uploadedFiles.map(f => f.name).join(', ')}`;
+            }
+            
+            addMessage(userMessage, true);
+            
+            // Store current data for later sending
+            currentEmailData = {
+                emails: emails,
+                message: message,
+                files: uploadedFiles
+            };
+
+            // Clear inputs but keep data in memory
+            taskbarInput.value = '';
+            charCount.textContent = '0/500';
+            charCount.style.color = '#666';
+            taskbarSend.disabled = true;
+
+            addTypingIndicator();
+
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('to_email', emails);
+                formData.append('user_message', message);
+                
+                // Append files
+                uploadedFiles.forEach(file => {
+                    formData.append('documents', file);
+                });
+
+                // Send request to backend
+                const response = await fetch('http://127.0.0.1:5000/generate_send', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Failed to generate email');
+
+                const data = await response.json();
+                removeTypingIndicator();
+
+                if(data.success){
+                    currentGeneratedEmail = data.ai_email;
+                    addMessage(data.ai_email, false, true);
+                } else {
+                    addMessage('Error: Could not generate email. Please try again.', false);
+                    console.error(data.error);
+                }
+
+            } catch (e) {
+                removeTypingIndicator();
+                addMessage('Error occurred while generating email.', false);
+                console.error(e);
+            } finally { 
+                taskbarSend.disabled = false;
+                // Clear documents from UI but keep in memory
+                documentPreview.innerHTML = '';
+                documentPreview.style.display = 'none';
+                taskbarUpload.classList.remove('active');
+            }
+        }
+
+        // ---------- Send Confirmation Modal ----------
+        function showSendConfirmation() {
+            if (!currentGeneratedEmail) return;
+            
+            emailPreview.textContent = currentGeneratedEmail;
+            modalOverlay.style.display = 'flex';
+        }
+
+        function hideSendConfirmation() {
+            modalOverlay.style.display = 'none';
+        }
+
+        // ---------- Actually Send Email ----------
+        async function sendEmail() {
+            if (!currentEmailData || !currentGeneratedEmail) return;
+            
+            addTypingIndicator();
+            hideSendConfirmation();
+
+            try {
+                // Prepare form data for actual sending
+                const formData = new FormData();
+                formData.append('to_email', currentEmailData.emails);
+                formData.append('user_message', currentEmailData.message);
+                
+                // Append files
+                currentEmailData.files.forEach(file => {
+                    formData.append('documents', file);
+                });
+
+                // Send request to backend
+                const response = await fetch('http://127.0.0.1:5000/generate_send', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Failed to send email');
+
+                const data = await response.json();
+                removeTypingIndicator();
+
+                if(data.success){
+                    // Add success message
+                    addMessage('✅ Email sent successfully!', false);
+                    
+                    // Clear current data
+                    currentGeneratedEmail = null;
+                    currentEmailData = null;
+                    uploadedFiles = [];
+                } else {
+                    addMessage('❌ Failed to send email. Please try again.', false);
+                    console.error(data.error);
+                }
+
+            } catch (e) {
+                removeTypingIndicator();
+                addMessage('❌ Error occurred while sending email.', false);
+                console.error(e);
+            }
+        }
+
+        // ---------- Edit Generated Email ----------
+        function editGeneratedEmail() {
+            if (!currentEmailData) return;
+            
+            // Restore original data
+            emailInput.value = currentEmailData.emails;
+            taskbarInput.value = currentEmailData.message;
+            
+            // Restore files in UI
+            currentEmailData.files.forEach(file => {
+                addDocumentToPreview(file);
+            });
+            uploadedFiles = [...currentEmailData.files];
+            
+            if (uploadedFiles.length > 0) {
+                taskbarUpload.classList.add('active');
+            }
+            
+            // Focus on taskbar input
+            taskbarInput.focus();
+        }
+
+        // ---------- Event listeners ----------
+        taskbarSend.addEventListener('click', generateEmail);
+
+        taskbarInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generateEmail();
+            }
+        });
+
+        taskbarMic.addEventListener('click', () => {
+            if (!recognition) {
+                alert('Speech recognition is not supported in your browser');
+                return;
+            }
+            
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+                taskbarMic.classList.remove('recording');
+            } else {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    taskbarMic.classList.add('recording');
+                } catch (error) {
+                    console.error('Speech recognition error:', error);
+                }
+            }
+        });
+
+        // Modal event listeners
+        modalClose.addEventListener('click', hideSendConfirmation);
+        cancelSend.addEventListener('click', hideSendConfirmation);
+        confirmSend.addEventListener('click', sendEmail);
+
+        // Close modal when clicking outside
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                hideSendConfirmation();
+            }
+        });
+
+        // ---------- Initialize the app ----------
+        document.addEventListener('DOMContentLoaded', () => {
+            initSpeechRecognition();
+            taskbarInput.focus();
+        });
+
+        // Make functions globally available
+        window.removeDocument = removeDocument;
+        window.editGeneratedEmail = editGeneratedEmail;
+        window.showSendConfirmation = showSendConfirmation;
+    </script>
+</body>
+</html>
